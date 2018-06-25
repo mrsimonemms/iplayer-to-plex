@@ -69,7 +69,6 @@ func Convert(dir string) (int, error) {
 	}
 
 	for _, file := range files {
-		fmt.Println(file.Path)
 		pid, err := getPid(file.Info.Name())
 
 		if err != nil {
@@ -93,8 +92,10 @@ func Convert(dir string) (int, error) {
 
 		name := programme.NewName(ext)
 		dir := filepath.Dir(file.Path)
+		newFilePath := filepath.Join(dir, name)
 
-		err = os.Rename(file.Path, filepath.Join(dir, name))
+		fmt.Printf("Converting \"%s\" to \"%s\"\n", file.Info.Name(), name)
+		err = os.Rename(file.Path, newFilePath)
 
 		if err != nil {
 			fmt.Println(err)
