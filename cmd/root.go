@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
 	Short: " Converts iPlayer format filenames to Plex format ",
 	Long: `This utility is used to convert iPlayer files, downloaded
 with Get iPlayer, into Plex format. It uses the iPlayer API to get the
-relevant information. It looks in the filename for "<pid> original.<ext>",
+relevant information. It looks in the filename for "<pid> original/editorial/podcast.<ext>",
 using the PID (Programme ID) to get the data.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {

@@ -130,7 +130,7 @@ func getFiles(dir string) ([]FilePath, error) {
 }
 
 func getPid(fileName string) (*string, error) {
-	re := regexp.MustCompile("(\\w+)\\soriginal\\..*$")
+	re := regexp.MustCompile("(\\w+)\\s(original|editorial|podcast)\\..*$")
 	match := re.FindStringSubmatch(fileName)
 
 	if len(match) == 0 {
