@@ -27,6 +27,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"path"
+	"github.com/riggerthegeek/iplayer-to-plex/convert"
 )
 
 var cfgFile string
@@ -34,16 +36,29 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "iplayer-to-plex",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: " Converts iPlayer format filenames to Plex format ",
+	Long: `This utility is used to convert iPlayer files, downloaded
+with Get iPlayer, into Plex format. It uses the iPlayer API to get the
+relevant information. It looks in the filename for "<pid> original.<ext>",
+using the PID (Programme ID) to get the data.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 1 {
+			args = append(args, getCwd())
+		}
+		pathFlag := args[0]
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+		if path.IsAbs(pathFlag) == false {
+			pathFlag = path.Join(getCwd(), pathFlag)
+		}
+
+		count, err := convert.Convert(pathFlag)
+
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Renamed %b file(s)\n", count)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -61,11 +76,19 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.iplayer-to-plex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func getCwd() string {
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		panic(err)
+	}
+
+	return cwd
 }
 
 // initConfig reads in config file and ENV variables if set.
