@@ -32,3 +32,14 @@ install:
 run:
 	go run ${MAIN} ${ARGS}
 .PHONY: run
+
+version:
+	rm ./VERSION
+	echo ${VER} > ./VERSION
+
+	git add ./VERSION
+	git commit -m "v${VER}"
+	git tag "v${VER}"
+	git push --tags
+	git push
+.PHONY: version
