@@ -11,3 +11,13 @@ install:
 
 script:
   - make build-all
+
+deploy:
+  provider: releases
+  api_key:
+    secure: drJ+f30HxBv0Voy/CO9TRoPoC1js6iLK2J4PH3SATCz9E27cNpf9doft640+Nywt8ag3Cv3Q1UlbFRSnD9gqJYijhFMXR/qK7qN3VzwWtkr6fH1i9xIXIpRnrfMi+goZfK/Qze22vYYq+uITHGyj6Kca5pt+deDNJzYUYfXM0b4m1QVZuoqZ49BnwMJGlO1NIMitQLni8cn5fIazD8bitxVTIp6snJyWvHBXZjnPLh+vngo57R7lJMscmPP7G52yOxqBHnQuqQ0GgzClG6n8S+MkPR5fqHYocz+Cg7SnRyr2trXyRsr3k5y/eR7trXrjBP4HGeR4ZjLxZViBfLvwvBgmIHoa9eOpK+MHy/b7R5tihH/xszL8rLC+pacJdiGQm9FuG6D2n+rbPKvXsQQzxq4+Hn1jSdofhHrcphXnM7g79RI7emBLNo+bw5vS/o5Zh1qcenmLplncimFbexovGtN68qG96qd/nCAN8vhUcIqNknda31hpx12MuhcuzXqIHMwpz04f+m4tHuJJw+FdH20pLimqGpQF53++47tNwS3Ns9HAoPw7oFNYMzsL77gy0OusatzkNunlKKekeJyGySx/G6f9m570eSIf+jpMNf6yzM0Ye3Lpk0+49UUa6w7r+A1XQaJORtW2xn191uPD+6PBVN/eL+xlNzVujcTEqOI=
+  file: "./dist/*"
+  file_glob: true
+  skip_cleanup: true
+  on:
+    tags: true
