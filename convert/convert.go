@@ -35,8 +35,8 @@ type Programme struct {
 }
 
 func (obj *Programme) NewName(ext string) string {
-	episodeTitle := obj.Programme.Title
-	showTitle := obj.Programme.DisplayTitle.Title
+	episodeTitle := removeNoAlnum(obj.Programme.Title)
+	showTitle := removeNoAlnum(obj.Programme.DisplayTitle.Title)
 	episodeNumber := obj.Programme.Position
 	seriesNumber := obj.Programme.Parent.Programme.Position
 
@@ -187,4 +187,15 @@ func leftPad (i int) string {
 	x += strconv.Itoa(i)
 
 	return x
+}
+
+func removeNoAlnum (str string) string {
+	re := regexp.MustCompile("\\W")
+	return re.ReplaceAllStringFunc(str, func(s string) string {
+		if s != " " {
+			return ""
+		}
+
+		return s
+	})
 }
