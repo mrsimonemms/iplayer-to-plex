@@ -3,7 +3,7 @@ MAIN ?= main.go
 NAME ?= iplayer-to-plex
 
 build:
-	go build -o ${DIST_PATH}/${NAME}${EXT} ${MAIN}
+	go build -ldflags "-X github.com/riggerthegeek/iplayer-to-plex/cmd.BuildVersion=$(shell cat VERSION)" -o ${DIST_PATH}/${NAME}${EXT} ${MAIN}
 
 	cd ${DIST_PATH} && sha256sum ${NAME}${EXT} > ${NAME}${EXT}.sha256
 .PHONY: build

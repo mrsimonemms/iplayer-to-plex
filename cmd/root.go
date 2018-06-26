@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"path"
@@ -32,11 +32,13 @@ import (
 )
 
 var cfgFile string
+var BuildVersion string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "iplayer-to-plex",
-	Short: " Converts iPlayer format filenames to Plex format ",
+	Version: BuildVersion,
+	Use:     "iplayer-to-plex",
+	Short:   " Converts iPlayer format filenames to Plex format ",
 	Long: `This utility is used to convert iPlayer files, downloaded
 with Get iPlayer, into Plex format. It uses the iPlayer API to get the
 relevant information. It looks in the filename for "<pid> original/editorial/podcast.<ext>",
@@ -79,6 +81,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.SetVersionTemplate("{{printf \"%s\" .Version}}\n")
 }
 
 func getCwd() string {
