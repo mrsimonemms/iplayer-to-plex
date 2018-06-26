@@ -57,7 +57,7 @@ using the PID (Programme ID) to get the data.`,
 			panic(err)
 		}
 
-		fmt.Printf("Renamed %b file(s)\n", count)
+		fmt.Printf("Renamed %d file(s)\n", count)
 	},
 }
 
