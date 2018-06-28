@@ -33,6 +33,7 @@ import (
 
 var cfgFile string
 var BuildVersion string
+var directory bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -53,7 +54,7 @@ using the PID (Programme ID) to get the data.`,
 			pathFlag = path.Join(getCwd(), pathFlag)
 		}
 
-		count, err := convert.Convert(pathFlag)
+		count, err := convert.Convert(pathFlag, directory)
 
 		if err != nil {
 			panic(err)
@@ -81,6 +82,8 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.Flags().BoolVarP(&directory, "directory", "d", false, "Renames the directory to <programme>/<series> if in a series of programmes")
+
 	rootCmd.SetVersionTemplate("{{printf \"%s\" .Version}}\n")
 }
 

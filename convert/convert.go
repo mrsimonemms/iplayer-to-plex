@@ -11,9 +11,11 @@ import (
 	"fmt"
 	"encoding/json"
 	"strconv"
+	"io"
 )
 
 type FilePath struct {
+	Dir string
 	Info os.FileInfo
 	Path string
 }
@@ -59,7 +61,20 @@ func (obj *Programme) NewName(ext string) string {
 	return name
 }
 
-func Convert(dir string) (int, error) {
+func (obj *Programme) DirName() string  {
+	showTitle := removeNoAlnum(obj.Programme.DisplayTitle.Title)
+	episodeNumber := obj.Programme.Position
+	seriesNumber := obj.Programme.Parent.Programme.Position
+
+	var name string
+	if episodeNumber != 0 && seriesNumber != 0 {
+		name = filepath.Join(showTitle, fmt.Sprintf("Series %d", seriesNumber))
+	}
+
+	return name
+}
+
+func Convert(dir string, setDir bool) (int, error) {
 	files, err := getFiles(dir)
 
 	count := 0
@@ -92,6 +107,14 @@ func Convert(dir string) (int, error) {
 
 		name := programme.NewName(ext)
 		dir := filepath.Dir(file.Path)
+
+		if setDir {
+			dir = filepath.Join(dir, "../", programme.DirName())
+		}
+
+		/* Ensure that the directories exist */
+		os.MkdirAll(dir, 0755)
+
 		newFilePath := filepath.Join(dir, name)
 
 		fmt.Printf("Converting \"%s\" to \"%s\"\n", file.Info.Name(), name)
@@ -100,6 +123,23 @@ func Convert(dir string) (int, error) {
 		if err != nil {
 			fmt.Println(err)
 			continue
+		}
+
+		empty, err := isEmpty(file.Dir)
+
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		if empty {
+			/* Remove directory if it's empty */
+			fmt.Printf("Removing directory %s\n", file.Dir)
+			err := os.Remove(file.Dir)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 
 		count += 1
@@ -118,6 +158,7 @@ func getFiles(dir string) ([]FilePath, error) {
 
 		if !info.IsDir() {
 			files = append(files, FilePath{
+				Dir: filepath.Dir(path),
 				Info: info,
 				Path: path,
 			})
@@ -175,6 +216,20 @@ func getNewName(pid string) (*Programme, error) {
 	}
 
 	return &data, nil
+}
+
+func isEmpty(name string) (bool, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1) // Or f.Readdir(1)
+	if err == io.EOF {
+		return true, nil
+	}
+	return false, err // Either not empty or error, suits both cases
 }
 
 func leftPad (i int) string {
