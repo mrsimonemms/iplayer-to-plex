@@ -1,36 +1,36 @@
 package convert
 
 import (
-	"path/filepath"
-	"os"
-	"regexp"
-	"errors"
-	"net/http"
-	"time"
-	"io/ioutil"
-	"fmt"
 	"encoding/json"
-	"strconv"
+	"errors"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strconv"
+	"time"
 )
 
 type FilePath struct {
-	Dir string
+	Dir  string
 	Info os.FileInfo
 	Path string
 }
 
 type Programme struct {
 	Programme struct {
-		Position int `json:"position"`
-		Title string `json:"title"`
+		Position     int    `json:"position"`
+		Title        string `json:"title"`
 		DisplayTitle struct {
 			Title string `json:"title"`
 		} `json:"display_title"`
 		Parent struct {
 			Programme struct {
-				Position int `json:"position"`
-				Title string `json:"title"`
+				Position int    `json:"position"`
+				Title    string `json:"title"`
 			} `json:"programme"`
 		} `json:"parent"`
 	} `json:"programme"`
@@ -61,7 +61,7 @@ func (obj *Programme) NewName(ext string) string {
 	return name
 }
 
-func (obj *Programme) DirName() string  {
+func (obj *Programme) DirName() string {
 	showTitle := removeNoAlnum(obj.Programme.DisplayTitle.Title)
 	episodeNumber := obj.Programme.Position
 	seriesNumber := obj.Programme.Parent.Programme.Position
@@ -158,7 +158,7 @@ func getFiles(dir string) ([]FilePath, error) {
 
 		if !info.IsDir() {
 			files = append(files, FilePath{
-				Dir: filepath.Dir(path),
+				Dir:  filepath.Dir(path),
 				Info: info,
 				Path: path,
 			})
@@ -171,7 +171,7 @@ func getFiles(dir string) ([]FilePath, error) {
 }
 
 func getPid(fileName string) (*string, error) {
-	re := regexp.MustCompile("(\\w+)\\s(original|editorial|podcast)\\..*$")
+	re := regexp.MustCompile("(\\w+)\\s(original|editorial|podcast|iplayer)\\..*$")
 	match := re.FindStringSubmatch(fileName)
 
 	if len(match) == 0 {
@@ -232,7 +232,7 @@ func isEmpty(name string) (bool, error) {
 	return false, err // Either not empty or error, suits both cases
 }
 
-func leftPad (i int) string {
+func leftPad(i int) string {
 	var x string
 
 	if i < 10 {
@@ -244,7 +244,7 @@ func leftPad (i int) string {
 	return x
 }
 
-func removeNoAlnum (str string) string {
+func removeNoAlnum(str string) string {
 	re := regexp.MustCompile("\\W")
 	return re.ReplaceAllStringFunc(str, func(s string) string {
 		if s != " " {
